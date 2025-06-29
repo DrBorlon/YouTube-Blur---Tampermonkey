@@ -1,0 +1,36 @@
+// ==UserScript==
+// @name         Blur YouTube Video
+// @namespace    http://tampermonkey.net/
+// @version      1.2
+// @description  Blur the YouTube video only, without affecting the playbar or UI interactions.
+// @author       OpenAI
+// @match        https://www.youtube.com/*
+// @grant        none
+// @run-at       document-idle
+// ==/UserScript==
+
+(function () {
+    'use strict';
+
+    const blurAmount = '50px';
+
+    function blurVideoOnly() {
+        const video = document.querySelector('video');
+        if (video && video.style.filter !== `blur(${blurAmount})`) {
+            video.style.filter = `blur(${blurAmount})`;
+        }
+    }
+
+    // Monitor changes in case the video reloads
+    const observer = new MutationObserver(() => {
+        blurVideoOnly();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Initial blur
+    blurVideoOnly();
+})();
